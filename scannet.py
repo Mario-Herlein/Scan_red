@@ -12,7 +12,12 @@ def main():
     while not validador:
         ip=input("\nLa dirección IP no existe, ingrese nuevamente: ")
         validador=chequeo_ip(ip)
-    return ip
+    netmask=int(input("Ingrese las mascara de red en notación CIDR: /"))
+    validador= chequeo_netmask(netmask)
+    while not validador:
+        netmask=netmask=int(input("\nLa mascara de red es incorrecta, debe ser mayor a 1 y menor a 32.\nIngrese nuevamente: /"))
+        validador=chequeo_netmask(netmask)
+    return ip, netmask
     
 
 def chequeo_ip(IP):
@@ -30,9 +35,12 @@ def chequeo_ip(IP):
         return False
 
 
+def chequeo_netmask(netmask):
+    return 1<netmask<32
 
-def scan(ip):
-    ip=ip+"/24"
+
+def scan(ip,netmask):
+    ip=ip+"/"+str(netmask)
 
     arp_req_frame = scapy.ARP(pdst = ip)
 
@@ -96,6 +104,6 @@ def display_result(result,IP):
             print("\n La URL seleccionada para el envio del archivo es invalida")
         
 
-IP=main()
-result = scan(IP)
+IP , netmask =main()
+result = scan(IP,netmask)
 display_result(result,IP)
